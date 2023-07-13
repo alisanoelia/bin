@@ -1,0 +1,5 @@
+#!/bin/bash
+REPO_NAME=$1
+REPO_URL="git@github.com:alisanoelia/$REPO_NAME"
+echo "Clonando repositorio: $REPO_NAME"
+git clone $REPO_URL
