@@ -1,5 +1,5 @@
 #!/bin/sh
 
 REPO=$1
-REPO_URL="https://github.com/$REPO_NAME"
+REPO_URL="https://github.com/$REPO"
 git clone $REPO_URL
