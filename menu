@@ -1,0 +1,10 @@
+#!/bin/bash
+
+dmenu_run\
+  -p "Ejecutar"\
+  -sb "#a6949e"\
+  -nf "#ffffff"\
+  -fn "JetBrainsMono Nerd Font:size=9"\
+  -c \
+  -l 10
+
