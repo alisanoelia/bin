@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+interface=$1
+sudo rfkill unblock all
+sudo wpa_supplicant -B -i $interface -c /etc/wpa_supplicant/casa && \
+  sudo dhcpcd
+echo "------------------------"
+echo "Se conecto correctamente"
+echo "------------------------"
