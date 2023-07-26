@@ -5,9 +5,8 @@ qemu-system-x86_64 \
   -enable-kvm \
   -vga virtio \
   -display sdl,show-cursor=on \
-  -smp 4,cores=4 \
-  -m 6G \
-  -device AC97 \
+  -smp 2,cores=2 \
+  -m 2G \
   -boot d \
   -cdrom $1 \
   -hda $2

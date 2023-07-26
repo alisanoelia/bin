@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Verificar si Nmap está instalado
+if ! command -v nmap &> /dev/null; then
+  echo "Nmap no está instalado. Por favor, instala Nmap antes de ejecutar este script."
+  exit 1
+fi
+
+# Dirección IP del rango a escanear (por ejemplo, 192.168.1.0/24)
+IP_RANGE="192.168.0.1/24"
+
+# Comprobar si el rango de IP es válido
+#if ! nmap $IP_RANGE | grep "Nmap scan report" &> /dev/null; then
+#  echo "Rango de IP inválido. Asegúrate de proporcionar un rango de IP válido, por ejemplo, 192.168.1.0/24"
+#  exit 1
+#fi
+
+# Ejecutar el escaneo con Nmap y mostrar el nombre del equipo
+echo "Iniciando escaneo de dispositivos en la red..."
+sudo nmap -sS -Pn $IP_RANGE > nmap_scan.txt
+
+# Mostrar los resultados del escaneo
+echo "Resultados del escaneo:"
+cat nmap_scan.txt
+
+# Eliminar el archivo temporal de resultados
+rm nmap_scan.txt
