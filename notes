@@ -1,0 +1,56 @@
+#!/bin/bash
+
+## ALyssa (c) 2023
+
+notas_dir="$HOME/notes"
+
+# Crear la carpeta de notas si no existe
+if [ ! -d "$notas_dir" ]; then
+    mkdir "$notas_dir"
+fi
+
+# Verificar si se proporcionó un argumento
+if [ $# -eq 0 ]; then
+    note_name=$(date +"%Y%m%d%H%M%S") # Generar un nombre de nota basado en la fecha y hora
+else
+    case "$1" in
+        -l)
+            notas=$(ls "$notas_dir")
+            if [ -z "$notas" ]; then
+                echo "No hay notas guardadas."
+                exit 0
+            fi
+            selected_note=$(echo "$notas" | fzf)
+            if [ -n "$selected_note" ]; then
+                echo "  "
+                bat "$notas_dir/$selected_note"
+                echo "  "
+            fi
+            exit 0
+            ;;
+        *)
+            note_name="$1"
+            ;;
+    esac
+fi
+
+note_file="$notas_dir/$note_name.txt"
+
+# Verificar si el archivo de nota ya existe
+if [ -e "$note_file" ]; then
+    echo "La nota '$note_name' ya existe. ¿Deseas modificarla? (S/N)"
+    read response
+    if [ "$response" != "S" ] && [ "$response" != "s" ]; then
+        exit 0
+    fi
+fi
+
+# Crear o modificar la nota
+echo "  "
+echo "Escribe tu nota"
+echo "  "
+cat > "$note_file"
+
+echo "  "
+echo "Se guardó en '$note_file'"
+echo "  "
