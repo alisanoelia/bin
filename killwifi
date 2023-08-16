@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo pkill wpa_supplicant
+sudo pkill wpa_supplicant
+
+sudo pkill dhcpcd
+sudo pkill dhcpcd

@@ -2,8 +2,14 @@
 #
 interface=$1
 sudo rfkill unblock all
+sudo pkill wpa_supplicant
+sudo pkill wpa_supplicant
+sudo pkill dhcpcd
+sudo pkill dhcpcd
+
 sudo wpa_supplicant -B -i $interface -c /etc/wpa_supplicant/casa && \
   sudo dhcpcd
+
 echo "------------------------"
 echo "Se conecto correctamente"
 echo "------------------------"
