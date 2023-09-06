@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Ruta al archivo de paleta de colores
+PALETTE_FILE="${HOME}/.cache/wal/colors.sh"
+
+# Rutas a los directorios de los proyectos st y dmenu
+ST_DIR="${HOME}/root/st"
+DMENU_DIR="/root/dmenu"
+
+# Función para compilar st
+compile_st() {
+    cd "$ST_DIR" || exit 1
+    make clean install
+}
+
+# Función para compilar dmenu
+compile_dmenu() {
+    cd "$DMENU_DIR" || exit 1
+    make clean install
+}
+
+compile_dmenu
+compile_st
+
+echo "Se ha cambiado la paleta de colores"

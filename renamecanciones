@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for archivo in *.mp3; do
+	nuevo_nombre=$(echo "$archivo" | sed 's/\[.*\]//g')
+	mv "$archivo" "$nuevo_nombre"
+done
