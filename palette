@@ -4,7 +4,7 @@
 PALETTE_FILE="${HOME}/.cache/wal/colors.sh"
 
 # Rutas a los directorios de los proyectos st y dmenu
-ST_DIR="${HOME}/root/st"
+ST_DIR="/root/st"
 DMENU_DIR="/root/dmenu"
 
 # Función para compilar st
