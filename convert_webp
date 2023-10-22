@@ -1,0 +1,31 @@
+#!/bin/bash
+# Comprobar si ImageMagick está instalado
+if ! command -v convert &> /dev/null; then
+    echo "ImageMagick no está instalado. Por favor, instálalo antes de continuar."
+    exit 1
+fi
+
+# Verificar si se proporciona un archivo de entrada como argumento
+if [ $# -eq 0 ]; then
+    echo "Uso: $0 <archivo de entrada>"
+    exit 1
+fi
+
+# Ruta del archivo de entrada
+input_file="$1"
+
+# Verificar si el archivo de entrada existe
+if [ ! -f "$input_file" ]; then
+    echo "El archivo de entrada '$input_file' no existe."
+    exit 1
+fi
+
+# Nombre del archivo de salida en formato WebP
+output_file="${input_file%.*}.webp"
+
+# Convertir la imagen a WebP con calidad 50
+convert "$input_file" -quality 50 "$output_file"
+
+echo "La imagen se ha convertido a $output_file con calidad reducida."
+
+exit 0
