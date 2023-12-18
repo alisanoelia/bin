@@ -11,10 +11,10 @@ password=$(echo "" | dmenu -p "Ingresa la contraseña:")
 
 # Crear el archivo de configuración de wpa_supplicant
 wpa_supplicant_conf=$(mktemp)
-echo "network={" >> "$wpa_supplicant_conf"
-echo "  ssid=\"$selected_network\"" >> "$wpa_supplicant_conf"
-echo "  psk=\"$password\"" >> "$wpa_supplicant_conf"
-echo "}" >> "$wpa_supplicant_conf"
+echo "network={" >>"$wpa_supplicant_conf"
+echo "ssid=\"$selected_network\"" >>"$wpa_supplicant_conf"
+echo "psk=\"$password\"" >>"$wpa_supplicant_conf"
+echo "}" >>"$wpa_supplicant_conf"
 
 # Conectar a la red seleccionada utilizando wpa_supplicant y dhclient
 sudo wpa_supplicant -B -i wlp1s0 -c "$wpa_supplicant_conf"
@@ -22,3 +22,5 @@ sudo dhcpcd
 
 # Eliminar el archivo de configuración temporal
 rm "$wpa_supplicant_conf"
+
+echo "Funciono"
