@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Eliminar sesiones existentes en HDMI-0
+xrandr --output HDMI-0 --off
+
+# Configurar la resolución virtual
+gtf 1366 768 60
+xrandr --newmode "1366x768_60.00"  85.25  1366 1440 1576 1784  768 771 781 798 -HSync +Vsync
+xrandr --addmode HDMI-0 1366x768_60.00
+
+# Obtener la posición actual de la pantalla principal (eDP)
+PRIMARY_POSITION=$(xrandr | grep "eDP" | awk '{print $4}')
+
+# Configurar HDMI-0 como un monitor extendido a la derecha de la pantalla principal
+xrandr --output HDMI-0 --mode 1366x768_60.00 --right-of eDP --pos $PRIMARY_POSITION
