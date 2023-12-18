@@ -1,5 +1,4 @@
 #!/bin/sh
-#
 # clean - remove orphaned packages and clean cache directory
 # (c) Kied Llaentenn (@kiedtl)
 # See the COPYING for more information.
@@ -20,4 +19,5 @@ fi
     done
 }
 [ -d ~/tmp ] && rm -rf ~/tmp/*
-[ -d ~/Downloads ] && rm -rf ~/Downloads
+# [ -d ~/Downloads ] && rm -rf ~/Downloads
+
