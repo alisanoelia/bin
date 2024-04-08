@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# Opciones del menú principal
+options=("Quitar extensión" "Agregar extensión")
+selected_option=0
+
+# Opciones del menú de extensiones
+extensions=(".py" ".lua" ".h" ".sh" ".back" ".c" ".go")
+selected_extension=0
+
+# Función para mostrar el menú principal y obtener la selección del usuario
+show_menu() {
+    clear
+    echo "Seleccione una opción:"
+    for i in "${!options[@]}"; do
+        if [[ $i -eq $selected_option ]]; then
+            echo " -> ${options[$i]}"
+        else
+            echo "    ${options[$i]}"
+        fi
+    done
+}
+
+# Función para ajustar la selección del usuario en el menú principal
+adjust_selection() {
+    if [[ $selected_option -lt 0 ]]; then
+        selected_option=$(( ${#options[@]} - 1 ))
+    elif [[ $selected_option -ge ${#options[@]} ]]; then
+        selected_option=0
+    fi
+}
+
+# Función para mostrar el menú de extensiones y obtener la selección del usuario
+show_extension_menu() {
+    clear
+    echo "Seleccione una extensión:"
+    for i in "${!extensions[@]}"; do
+        if [[ $i -eq $selected_extension ]]; then
+            echo " -> ${extensions[$i]}"
+        else
+            echo "    ${extensions[$i]}"
+        fi
+    done
+}
+
+# Función para ajustar la selección del usuario en el menú de extensiones
+adjust_extension_selection() {
+    if [[ $selected_extension -lt 0 ]]; then
+        selected_extension=$(( ${#extensions[@]} - 1 ))
+    elif [[ $selected_extension -ge ${#extensions[@]} ]]; then
+        selected_extension=0
+    fi
+}
+
+# Función para quitar la extensión de un archivo
+remove_extension() {
+    mv "$1" "${1%.*}"
+}
+
+# Función para agregar una extensión a un archivo
+add_extension() {
+    extension=${extensions[$selected_extension]}
+    mv "$1" "$1$extension"
+}
+
+# Verificar que se haya proporcionado un argumento
+if [ $# -ne 1 ]; then
+    echo "Uso: $0 <nombre_archivo>"
+    exit 1
+fi
+
+filename="$1"
+
+# Loop para mostrar el menú principal y capturar la selección del usuario
+while true; do
+    show_menu
+    read -sn1 key
+    case $key in
+        A) ((selected_option--)); adjust_selection ;;
+        B) ((selected_option++)); adjust_selection ;;
+        "")  # Enter
+            case $selected_option in
+                0) remove_extension "$filename"; break ;;
+                1) 
+                    # Loop para mostrar el menú de extensiones y capturar la selección del usuario
+                    while true; do
+                        show_extension_menu
+                        read -sn1 key
+                        case $key in
+                            A) ((selected_extension--)); adjust_extension_selection ;;
+                            B) ((selected_extension++)); adjust_extension_selection ;;
+                            "")  # Enter
+                                add_extension "$filename"
+                                break 2 ;;
+                        esac
+                    done
+                    ;;
+            esac
+            ;;
+    esac
+done
