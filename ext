@@ -5,7 +5,7 @@ options=("Quitar extensión" "Agregar extensión")
 selected_option=0
 
 # Opciones del menú de extensiones
-extensions=(".py" ".lua" ".h" ".sh" ".back" ".c" ".go")
+extensions=(".back" ".py" ".lua" ".h" ".sh" ".c" ".go")
 selected_extension=0
 
 # Función para mostrar el menú principal y obtener la selección del usuario
