@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Directorio donde están las imágenes
+SOURCE_DIR="/home/alyssa/"
+
+# Directorio de destino
+DESTINATION_DIR="/home/alyssa/images"
+
+# Crear el directorio de destino si no existe
+mkdir -p "$DESTINATION_DIR"
+
+# Mover archivos que terminan con 'unsplash.jpg'
+for file in "$SOURCE_DIR"/*unsplash.jpg; do
+  if [ -f "$file" ]; then
+    mv "$file" "$DESTINATION_DIR"
+    echo "Moviendo: $file a $DESTINATION_DIR"
+  fi
+done
+
+echo "Imágenes movidas exitosamente."
