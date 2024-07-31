@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [ $(bspc query --node focused.floating.\!hidden.window.local --nodes | wc -l) -gt 0 ]; then
+    floatwininfo=$(bspc query --node focused.floating.\!hidden.window.local --tree)
+    floatwinxcoords=$(echo "$floatwininfo" | cut -d ":" -f38 | cut -d "," -f1)
+    floatwinycoords=$(echo "$floatwininfo" | cut -d ":" -f39 | cut -d "," -f1)
+    floatwinwidth=$(echo "$floatwininfo" | cut -d ":" -f40 | cut -d "," -f1)
+    floatwinheight=$(echo "$floatwininfo" | cut -d ":" -f41 | tr -d "}")
+    monitorinfo=$(bspc query --monitor focused --tree)
+    monitorwidth=$(echo "$monitorinfo" | cut -d ":" -f18 | cut -d "," -f1)
+    monitorheight=$(echo "$monitorinfo" | cut -d ":" -f19 | cut -d "," -f1 | tr -d "}")
+    bspc node -v $(( ($monitorwidth/2) - $floatwinxcoords - ($floatwinwidth/2) )) $(( ($monitorheight/2) - $floatwinycoords - ($floatwinheight/2) ))
+else
+    notify-send -u low "BSPWM" "No Levatating Window\nis Currently Focused"
+fi
+
+# x=1920
+# y=1080
+#
+# stx=1024
+# sty=720
+#
+# restax=$(( x - stx ))
+# restay=$(( y - sty ))
+#
+# centerx=$(( restax / 2 ))
+# centery=$(( restay / 2 ))
+#
+# bspc rule -a st-256color state=floating rectangle ${stx}x${sty}+${centerx}+${centery}

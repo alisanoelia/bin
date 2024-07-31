@@ -1,0 +1,162 @@
+#!/bin/bash
+
+# epifiano - 2024
+# ssw - stupid set wallpaper
+
+DIRECTORIO="$1"
+
+if [ ! -d "$DIRECTORIO" ]; then
+    echo "Please introduce an existing directory."
+    exit 1
+fi
+
+FIFO="/tmp/preview_fifo"
+IMAGENES=()
+selected_index=0
+scroll_offset=0
+
+KEY_DOWN="j"
+KEY_UP="k"
+KEY_QUIT="q"
+KEY_SELECT=""
+
+check_dependencies() {
+    for cmd in ueberzugpp identify hsetroot; do
+        if ! command -v "$cmd" &> /dev/null; then
+            echo "Error: $cmd no está instalado. Por favor, instálalo e inténtalo de nuevo."
+            exit 1
+        fi
+    done
+}
+
+load_images() {
+    mapfile -t IMAGENES < <(find "$DIRECTORIO" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" \) | sort)
+}
+
+get_term_size() {
+    read -r LINES COLUMNS < <(stty size)
+    ((max_items=LINES-3))
+}
+
+get_image_dimensions() {
+    identify -format '%wx%h' "$1" 2>/dev/null
+}
+
+preview_image() {
+    local image="$1"
+    get_term_size
+    local preview_width=$((COLUMNS / 2))
+    local dimensions=$(get_image_dimensions "$image")
+    if [[ -n "$dimensions" ]]; then
+        IFS='x' read -r width height <<< "$dimensions"
+        local scaled_width scaled_height
+        if ((width > preview_width)); then
+            scaled_width=$preview_width
+            scaled_height=$((height * preview_width / width))
+        else
+            scaled_width=$width
+            scaled_height=$height
+        fi
+        echo '{"path": "'"$image"'", "action": "add", "identifier": "img-preview", "x": '"$((COLUMNS - scaled_width - 8 ))"', "y": 3, "width": "'"$scaled_width"'", "height": "'"$scaled_height"'"}' > "$FIFO"
+    fi
+}
+
+start_ueberzugpp() {
+    [[ -p "$FIFO" ]] || mkfifo "$FIFO"
+    ueberzugpp layer -o x11 < "$FIFO" &
+    exec 3> "$FIFO"
+}
+
+cleanup_ueberzugpp() {
+    echo '{"action": "remove", "identifier": "img-preview"}' > "$FIFO"
+    rm "$FIFO"
+}
+
+show_image_list() {
+    get_term_size
+    local scroll_start=$scroll_offset
+    local scroll_end
+    local scroll_new_pos
+
+    if (( ${#IMAGENES[@]} <= max_items )); then
+        scroll_start=0
+        scroll_end=${#IMAGENES[@]}-1
+        scroll_new_pos=$((selected_index + 1))
+    elif ((selected_index < max_items / 2)); then
+        scroll_start=0
+        scroll_end=$((max_items - 1))
+        scroll_new_pos=$((selected_index + 1))
+    elif ((selected_index >= ${#IMAGENES[@]} - max_items / 2)); then
+        scroll_start=$(( ${#IMAGENES[@]} - max_items ))
+        scroll_end=${#IMAGENES[@]}-1
+        scroll_new_pos=$((selected_index - scroll_start + 1))
+    else
+        scroll_start=$((selected_index - max_items / 2))
+        scroll_end=$((scroll_start + max_items - 1))
+        scroll_new_pos=$((max_items / 2 + 1))
+    fi
+
+    clear
+    for ((i = scroll_start; i <= scroll_end; i++)); do
+        ((i > scroll_start)) && printf '\n'
+        if ((i >= 0 && i < ${#IMAGENES[@]})); then
+            local imagen="${IMAGENES[$i]##*/}"
+            if ((i == selected_index)); then
+                printf " > $imagen"
+            else
+                printf "  $imagen"
+            fi
+        fi
+    done
+    # printf '\e[%sH' "$scroll_new_pos"
+}
+
+handle_input() {
+    local total_images=${#IMAGENES[@]}
+    case "$1" in
+        "$KEY_DOWN")
+            if ((selected_index < total_images - 1)); then
+                selected_index=$((selected_index + 1))
+                if ((selected_index >= scroll_offset + max_items)); then
+                    scroll_offset=$((scroll_offset + 1))
+                fi
+            fi
+            ;;
+        "$KEY_UP")
+            if ((selected_index > 0)); then
+                selected_index=$((selected_index - 1))
+                if ((selected_index < scroll_offset)); then
+                    scroll_offset=$((scroll_offset - 1))
+                fi
+            fi
+            ;;
+        "$KEY_SELECT")
+            hsetroot -cover "${IMAGENES[$selected_index]}"
+            ;;
+        "$KEY_QUIT")
+            return 1
+            ;;
+    esac
+    return 0
+}
+
+main() {
+    check_dependencies
+    load_images
+    start_ueberzugpp
+    trap cleanup_ueberzugpp EXIT
+    printf '\e[?25l'
+    show_image_list
+    preview_image "${IMAGENES[$selected_index]}"
+    while true; do
+        read -rsn1 input
+        handle_input "$input" || break
+        show_image_list
+        preview_image "${IMAGENES[$selected_index]}"
+    done
+    
+		printf '\e[?25h'
+    clear
+}
+
+main
