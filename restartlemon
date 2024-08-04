@@ -1,4 +1,0 @@
-#!/bin/sh
-
-pkill lemonbar
-. ~/.config/lemonbar/bar

@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Deshabilitar la aceleración gráfica en WebKit
-export WEBKIT_DISABLE_COMPOSITING_MODE=1
-
-# Ejecutar surf con la URL proporcionada o una URL predeterminada
-surf "$@"
