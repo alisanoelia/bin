@@ -3,12 +3,12 @@
 
 qemu-system-x86_64 \
   -M q35 \
-  -cpu host \
   -enable-kvm \
+	-machine pc \
 	-vga virtio \
 	-display gtk,gl=off,show-cursor=on \
-  -smp 3,cores=3 \
-  -m 2G \
+  -smp 4,cores=4 \
+  -m 4G \
   -device AC97 \
   -usb \
   -hda $1

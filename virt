@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# x11vnc -display :1 
+# -nocursorshape
+# -nodpms
+
+x11vnc -clip 1600x900+1920+90 \
+	-display :1 \
+	-forever -nopw \
+	-xwarppointer -noxdamage  \
+	-cursor arrow \
+	-repeat \
+	-nolookup \
+	-noipv6 \
+	-nonap -sb 0 -ping 1 -nofbpm -nowf -noxcomposite \
+	-noscr -allinput
