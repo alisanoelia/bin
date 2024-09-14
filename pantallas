@@ -1,22 +1,22 @@
 #!/bin/bash
 
-# Configurar framebuffer
+# # Configurar framebuffer
 # xrandr --fb 2944x1080
-
-# Configurar resoluciones de las pantallas
+#
+# # Configurar resoluciones de las pantallas
 # xrandr --output HDMI-0 --mode 1920x1080 --pos 0x0 --primary
-# xrandr --output DP-1 --mode 1024x576 --pos 1920x0
+# xrandr --output DP-0 --mode 1024x576 --pos 1920x0
 
 # Configurar framebuffer
 xrandr --fb 3520x1080
 
 # Configurar resoluciones de las pantallas
 xrandr --output HDMI-0 --mode 1920x1080 --pos 0x0 --primary
-xrandr --output DP-1 --mode 1600x900 --pos 1920x90
+xrandr --output DP-0 --mode 1600x900 --pos 1920x90
 
 # # Configurar framebuffer
 # xrandr --fb 2720x1080
 #
 # # Configurar resoluciones de las pantallas
 # xrandr --output HDMI-0 --mode 1920x1080 --pos 0x0 --primary
-# xrandr --output DP-1 --mode 800x600 --pos 1920x240
+# xrandr --output DP-0 --mode 800x600 --pos 1920x240
