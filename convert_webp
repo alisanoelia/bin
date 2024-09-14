@@ -24,7 +24,7 @@ fi
 output_file="${input_file%.*}.webp"
 
 # Convertir la imagen a WebP con calidad 50
-convert "$input_file" -quality 50 "$output_file"
+magick convert "$input_file" -quality 50 "$output_file"
 
 echo "La imagen se ha convertido a $output_file con calidad reducida."
 
