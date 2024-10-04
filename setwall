@@ -1,2 +1,5 @@
 #!/bin/sh
-hsetroot -cover $1
+
+image=$1
+
+display -resize 1920x1080 -window root $image
