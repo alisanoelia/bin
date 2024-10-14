@@ -2,4 +2,4 @@
 
 image=$1
 
-display -resize 1920x1080 -window root $image
+display -window root $image
