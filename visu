@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+image=$1
+
+if [ -z "$image" ]; then
+    echo "Uso: $0 <imagen>"
+    exit 1
+fi
+
+nsxiv -b -s h "$image" &
