@@ -102,9 +102,9 @@ show_image_list() {
         if ((i >= 0 && i < ${#IMAGENES[@]})); then
             local imagen="${IMAGENES[$i]##*/}"
             if ((i == selected_index)); then
-                printf " > $imagen"
+								printf "\033[43m $imagen \033[0m"
             else
-                printf "  $imagen"
+                printf " $imagen"
             fi
         fi
     done
@@ -132,7 +132,8 @@ handle_input() {
             ;;
         "$KEY_SELECT")
             hsetroot -cover "${IMAGENES[$selected_index]}"
-            ;;
+						# setwall "${IMAGENES[$selected_index]}"   
+						;;
         "$KEY_QUIT")
             return 1
             ;;
