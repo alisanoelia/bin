@@ -96,14 +96,13 @@ pkg() {
 	esac
 }
 
-# Imprimir información del sistema
+# Imprimir información del sistema con dibujo ASCII
 print_info() {
 	printf "
-${bg_yellow}${text_black} os ${text_default}${bg_default} $(os)
-${bg_cyan}${text_black} sh ${text_default}${bg_default} $(shell)
-${bg_magenta}${text_black} wm ${text_default}${bg_default} $(wm)
-${bg_blue}${text_black} up ${text_default}${bg_default} $(uptimesys)
-${bg_red}${text_black} pk ${text_default}${bg_default} $(pkg)
+	 ${bg_yellow}${text_black} os ${text_default}${bg_default} $(os)
+${bg_default}(\ /)    ${bg_green}${text_black} kr ${text_default}${bg_default} $(shell)
+${bg_default}( . .)   ${bg_cyan}${text_black} sh ${text_default}${bg_default} $(wm)
+${bg_default}c(${bg_magenta}${text_black}\"${text_default}${bg_default})(${bg_magenta}${text_black}\"${text_default}${bg_default})  ${bg_blue}${text_black} wm ${text_default}${bg_default} $(uptimesys)
 \n"
 }
 
