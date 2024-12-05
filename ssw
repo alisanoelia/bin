@@ -102,9 +102,9 @@ show_image_list() {
         if ((i >= 0 && i < ${#IMAGENES[@]})); then
             local imagen="${IMAGENES[$i]##*/}"
             if ((i == selected_index)); then
-								printf "\033[43m $imagen \033[0m"
+								printf "\033[43m\033[30m $imagen \033[0m\033[0m"
             else
-                printf " $imagen"
+                printf " $imagen "
             fi
         fi
     done
