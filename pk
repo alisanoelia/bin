@@ -13,4 +13,4 @@ count_installed_packages() {
 # Llamamos a la función para obtener el número de paquetes instalados
 num_packages=$(count_installed_packages)
 
-echo "$num_packages"
+printf "%s" "$num_packages"
