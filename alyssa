@@ -2,4 +2,5 @@
 
 export WEBKIT_DISABLE_COMPOSITING_MODE=1
 
-exec ~/laboratorio/alyssa-browser/browser
+# exec ~/laboratorio/alyssa-browser/browser
+surf "$@"
