@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ls /etc/X11/xorg.conf.d/20*
+
 case "$1" in
 		a)
 			doas mv /etc/X11/xorg.conf.d/20-virt-monitor.conf.disabled /etc/X11/xorg.conf.d/20-virt-monitor.conf

@@ -8,7 +8,7 @@ read -r kernel < /proc/sys/kernel/osrelease
 #while read -r line; do
     #[ "${line#exec }" = "$line" ] || wm="${line#exec }"
 #done < "$HOME/.xinitrc"
-wm="2bwm"
+wm="bspwm"
 
 # Colors and palette method stolen from dylanaraps pftech
 # https://github.com/dylanaraps/pfetch

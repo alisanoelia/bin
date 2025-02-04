@@ -1,3 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
-st ytfzf -t -f "$1"
+# st ytfzf -t -f "$1"
+ytfzf -t -f "$*"

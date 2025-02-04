@@ -1,0 +1,6 @@
+#!/bin/sh
+
+mes=$1
+year=$2
+
+curl -s https://cucuta.gov.co/wp-content/uploads/$year/$mes/ | grep -Eo 'href="[^"]+\.pdf"' | sed 's/href="//;s/"$//'
