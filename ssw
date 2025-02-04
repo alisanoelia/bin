@@ -3,17 +3,23 @@
 # epifiano - 2024
 # ssw - stupid set wallpaper
 
-DIRECTORIO="$1"
-
-if [ ! -d "$DIRECTORIO" ]; then
-    echo "Please introduce an existing directory."
-    exit 1
-fi
-
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/ssw"
+PREVIEW_THROTTLE=0.1
 FIFO="/tmp/preview_fifo"
+mkdir -p "$CACHE_DIR"
+
 IMAGENES=()
+declare -A IMAGE_DIMENSIONS_CACHE
 selected_index=0
 scroll_offset=0
+last_preview_time=0
+preview_pending=false
+
+DIRECTORIO="$1"
+if [ ! -d "$DIRECTORIO" ]; then
+    echo "Error: Por favor introduce un directorio válido."
+    exit 1
+fi
 
 KEY_DOWN="j"
 KEY_UP="k"
@@ -21,7 +27,7 @@ KEY_QUIT="q"
 KEY_SELECT=""
 
 check_dependencies() {
-    for cmd in ueberzugpp identify hsetroot; do
+    for cmd in ueberzugpp identify hsetroot bc; do
         if ! command -v "$cmd" &> /dev/null; then
             echo "Error: $cmd no está instalado. Por favor, instálalo e inténtalo de nuevo."
             exit 1
@@ -30,7 +36,19 @@ check_dependencies() {
 }
 
 load_images() {
-    mapfile -t IMAGENES < <(find "$DIRECTORIO" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" \) | sort)
+    local cache_file="$CACHE_DIR/$(echo "$DIRECTORIO" | md5sum | cut -d' ' -f1)"
+    
+    if [[ -f "$cache_file" ]] && [[ $(find "$cache_file" -mmin -60) ]]; then
+        mapfile -t IMAGENES < "$cache_file"
+    else
+        mapfile -t IMAGENES < <(find "$DIRECTORIO" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" \) -print0 | sort -z | tr '\0' '\n')
+        printf "%s\n" "${IMAGENES[@]}" > "$cache_file"
+    fi
+    
+    
+    for ((i=0; i<10 && i<${#IMAGENES[@]}; i++)); do
+        IMAGE_DIMENSIONS_CACHE[${IMAGENES[$i]}]=$(get_image_dimensions "${IMAGENES[$i]}")
+    done
 }
 
 get_term_size() {
@@ -39,14 +57,49 @@ get_term_size() {
 }
 
 get_image_dimensions() {
-    identify -format '%wx%h' "$1" 2>/dev/null
+    local image="$1"
+    local cache_key="$CACHE_DIR/$(echo "$image" | md5sum | cut -d' ' -f1)"
+    
+    
+    if [[ -f "$cache_key" ]]; then
+        cat "$cache_key"
+        return
+    fi
+    
+    
+    local dimensions
+    dimensions=$(identify -format '%wx%h' "$image" 2>/dev/null)
+    if [[ -n "$dimensions" ]]; then
+        echo "$dimensions" > "$cache_key"
+        echo "$dimensions"
+    fi
 }
 
 preview_image() {
     local image="$1"
+    local current_time
+    current_time=$(date +%s.%N)
+    
+    
+    local time_diff
+    time_diff=$(echo "$current_time - $last_preview_time" | bc 2>/dev/null)
+    if [[ -n "$time_diff" ]] && (( $(echo "$time_diff < $PREVIEW_THROTTLE" | bc -l) )); then
+        preview_pending=true
+        return
+    fi
+    
+    preview_pending=false
+    last_preview_time=$current_time
+    
     get_term_size
     local preview_width=$((COLUMNS / 2))
-    local dimensions=$(get_image_dimensions "$image")
+    local dimensions=${IMAGE_DIMENSIONS_CACHE[$image]}
+    
+    if [[ -z "$dimensions" ]]; then
+        dimensions=$(get_image_dimensions "$image")
+        IMAGE_DIMENSIONS_CACHE[$image]=$dimensions
+    fi
+    
     if [[ -n "$dimensions" ]]; then
         IFS='x' read -r width height <<< "$dimensions"
         local scaled_width scaled_height
@@ -57,7 +110,9 @@ preview_image() {
             scaled_width=$width
             scaled_height=$height
         fi
-        echo '{"path": "'"$image"'", "action": "add", "identifier": "img-preview", "x": '"$((COLUMNS - scaled_width - 8 ))"', "y": 3, "width": "'"$scaled_width"'", "height": "'"$scaled_height"'"}' > "$FIFO"
+        {
+            echo '{"path": "'"$image"'", "action": "add", "identifier": "img-preview", "x": '"$((COLUMNS - scaled_width - 8 ))"', "y": 3, "width": "'"$scaled_width"'", "height": "'"$scaled_height"'"}' > "$FIFO"
+        } &
     fi
 }
 
@@ -132,7 +187,7 @@ handle_input() {
             ;;
         "$KEY_SELECT")
             hsetroot -cover "${IMAGENES[$selected_index]}"
-						# setwall "${IMAGENES[$selected_index]}"   
+						
 						;;
         "$KEY_QUIT")
             return 1
@@ -145,18 +200,31 @@ main() {
     check_dependencies
     load_images
     start_ueberzugpp
+    
+    
     trap cleanup_ueberzugpp EXIT
+    trap 'clear; exit' INT TERM
+    
+    
     printf '\e[?25l'
+    
+    
     show_image_list
     preview_image "${IMAGENES[$selected_index]}"
+    
+    
     while true; do
-        read -rsn1 input
-        handle_input "$input" || break
-        show_image_list
-        preview_image "${IMAGENES[$selected_index]}"
+        if read -rsn1 -t 0.1 input; then
+            handle_input "$input" || break
+            show_image_list
+            preview_image "${IMAGENES[$selected_index]}"
+        elif [[ "$preview_pending" = true ]]; then
+            preview_image "${IMAGENES[$selected_index]}"
+        fi
     done
     
-		printf '\e[?25h'
+    
+    printf '\e[?25h'
     clear
 }
 
