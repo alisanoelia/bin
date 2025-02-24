@@ -1,0 +1,4 @@
+#!/bin/sh
+
+package=$1
+doas xbps-remove -Rn $1

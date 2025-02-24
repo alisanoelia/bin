@@ -1,0 +1,5 @@
+#!/bin/sh
+
+program="$@"
+
+doas xbps-query -Rs $program
