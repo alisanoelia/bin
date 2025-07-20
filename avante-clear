@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+printf '\n'
+printf 'Eliminando el historial de avante\n'
+
+printf 'Eliminando: %s\n' "$HOME/.local/state/nvim/avante"
+rm -rf "$HOME/.local/state/nvim/avante"
+printf 'Eliminando: %s\n' "$HOME/.cache/nvim/avante"
+rm -rf "$HOME/.cache/nvim/avante"
+
+printf '\n'
+printf 'Listo\n'

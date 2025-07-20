@@ -17,9 +17,9 @@ find "$HOME/.cache" -mindepth 1 -maxdepth 1 ! -name 'nvim' -exec rm -rf {} \;
 find "$HOME/.cache/nvim" -mindepth 1 -maxdepth 1 ! -name 'codeium' -exec rm -rf {} \;
 
 # Temporales
-printf "Limpiando temporales...\n"
-rm -rf /tmp/*
-rm -rf "$HOME"/tmp/*
+# printf "Limpiando temporales...\n"
+# rm -rf /tmp/*
+# rm -rf "$HOME"/tmp/*
 
 # Historiales
 printf "Limpiando historiales...\n"
