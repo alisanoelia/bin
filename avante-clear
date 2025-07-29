@@ -10,7 +10,7 @@ rm -rf "$HOME/.cache/nvim/avante"
 
 if [ "$1" = "--copilot" ]; then
     printf "Refrescar token de Copilot\n"
-    rm -rf "$HOME/.local/nvim/avante/github-copilot.json"
+    rm -rf "$HOME/.local/share/nvim/avante/github-copilot.json"
 fi
 
 printf '\n'
