@@ -8,5 +8,10 @@ rm -rf "$HOME/.local/state/nvim/avante"
 printf 'Eliminando: %s\n' "$HOME/.cache/nvim/avante"
 rm -rf "$HOME/.cache/nvim/avante"
 
+if [ "$1" = "--copilot" ]; then
+    printf "Refrescar token de Copilot\n"
+    rm -rf "$HOME/.local/nvim/avante/github-copilot.json"
+fi
+
 printf '\n'
 printf 'Listo\n'
