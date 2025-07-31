@@ -1,31 +1,55 @@
 #!/bin/bash
 # Comprobar si ImageMagick está instalado
 if ! command -v convert &> /dev/null; then
-    echo "ImageMagick no está instalado. Por favor, instálalo antes de continuar."
+    printf '%s\n' "ImageMagick no está instalado. Por favor, instálalo antes de continuar."
     exit 1
 fi
 
-# Verificar si se proporciona un archivo de entrada como argumento
+# Función para mostrar el uso
+mostrar_uso() {
+    printf '%s\n' "Uso: $0 <archivo de entrada>"
+    printf '%s\n' "     $0 -m <archivo1> <archivo2> ..."
+    printf '%s\n' "     $0 --multi <archivo1> <archivo2> ..."
+    printf '\nOpciones:\n'
+    printf '%s\n' "  -m, --multi    Convertir varias imágenes y guardarlas en una carpeta 'webp' en la misma ruta."
+    exit 1
+}
+
+# Si no hay argumentos, mostrar uso
 if [ $# -eq 0 ]; then
-    echo "Uso: $0 <archivo de entrada>"
-    exit 1
+    mostrar_uso
 fi
 
-# Ruta del archivo de entrada
+# Modo múltiple
+if [ "$1" = "-m" ] || [ "$1" = "--multi" ]; then
+    shift
+    if [ $# -eq 0 ]; then
+        printf '%s\n' "Debes proporcionar al menos un archivo para convertir."
+        exit 1
+    fi
+    for input_file in "$@"; do
+        if [ ! -f "$input_file" ]; then
+            printf '%s\n' "El archivo de entrada '$input_file' no existe."
+            continue
+        fi
+        dir_name="$(dirname "$input_file")"
+        output_dir="$dir_name/webp"
+        mkdir -p "$output_dir"
+        base_name="$(basename "$input_file")"
+        output_file="$output_dir/${base_name%.*}.webp"
+        magick convert "$input_file" -quality 50 "$output_file"
+        printf '%s\n' "La imagen '$input_file' se ha convertido a '$output_file' con calidad reducida."
+    done
+    exit 0
+fi
+
+# Modo de un solo archivo
 input_file="$1"
-
-# Verificar si el archivo de entrada existe
 if [ ! -f "$input_file" ]; then
-    echo "El archivo de entrada '$input_file' no existe."
+    printf '%s\n' "El archivo de entrada '$input_file' no existe."
     exit 1
 fi
-
-# Nombre del archivo de salida en formato WebP
 output_file="${input_file%.*}.webp"
-
-# Convertir la imagen a WebP con calidad 50
 magick convert "$input_file" -quality 50 "$output_file"
-
-echo "La imagen se ha convertido a $output_file con calidad reducida."
-
+printf '%s\n' "La imagen se ha convertido a $output_file con calidad reducida."
 exit 0
