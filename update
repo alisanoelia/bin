@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# if doas or sudo is available, use it
+
+if command -v doas >/dev/null 2>&1; then
+		SUPERUSER="doas"
+elif command -v sudo >/dev/null 2>&1; then
+		SUPERUSER="sudo"
+else
+		printf '%s\n' "Neither doas nor sudo is available. Please install one of them."
+		exit 1
+fi
+
+# flags
+if [ "$1" = "xbps" ]; then
+	# Update xbps y salir
+	printf '%s\n' "Updating xbps..."
+	$SUPERUSER xbps-install -Su xbps
+	exit 0
+elif [ -z "$1" ]; then
+	# Sin argumentos: actualizar todo el sistema
+	printf '%s\n' "Updating all packages..."
+	$SUPERUSER xbps-install -Su
+else
+	printf '%s\n' "Uso: $0 [xbps]"
+	printf '%s\n' "  xbps   Actualiza solo el paquete xbps"
+	printf '%s\n' "  (sin argumentos) Actualiza todo el sistema"
+	exit 1
+fi
