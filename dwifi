@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Obtener las redes WiFi disponibles
-wifi_networks=$(sudo iwlist wlp1s0 scan | grep ESSID | awk -F':' '{print $2}' | tr -d '""')
+wifi_networks=$(sudo iwlist wlp3s0 scan | grep ESSID | awk -F':' '{print $2}' | tr -d '""')
 
 # Mostrar el menú de selección utilizando dmenu
 selected_network=$(echo "$wifi_networks" | dmenu -p "Selecciona una red:")
@@ -17,7 +17,7 @@ echo "psk=\"$password\"" >>"$wpa_supplicant_conf"
 echo "}" >>"$wpa_supplicant_conf"
 
 # Conectar a la red seleccionada utilizando wpa_supplicant y dhclient
-sudo wpa_supplicant -B -i wlp1s0 -c "$wpa_supplicant_conf"
+sudo wpa_supplicant -B -i wlp3s0 -c "$wpa_supplicant_conf"
 sudo dhcpcd
 
 # Eliminar el archivo de configuración temporal
