@@ -4,13 +4,13 @@ printf '\n'
 printf 'Eliminando el historial de avante\n'
 
 printf 'Eliminando: %s\n' "$HOME/.local/state/nvim/avante"
-rm -rf "$HOME/.local/state/nvim/avante"
+rm -rfv "$HOME/.local/state/nvim/avante"
 printf 'Eliminando: %s\n' "$HOME/.cache/nvim/avante"
-rm -rf "$HOME/.cache/nvim/avante"
+rm -rfv "$HOME/.cache/nvim/avante"
 
 if [ "$1" = "--copilot" ]; then
     printf "Refrescar token de Copilot\n"
-    rm -rf "$HOME/.local/share/nvim/avante/github-copilot.json"
+    rm -rfv "$HOME/.local/share/nvim/avante/github-copilot.json"
 fi
 
 printf '\n'
